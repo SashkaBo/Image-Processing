@@ -2,7 +2,7 @@ function CanvasImage(canvas, src) {
   var context = canvas.getContext('2d');
   var i = new Image();
   var that = this;
-  image.onload = function() {
+  i.onload = function() {
     canvas.width = i.width;
     canvas.height = i.height;
     context.drawImage(i, 0, 0, i.width, i.height);
@@ -13,7 +13,9 @@ function CanvasImage(canvas, src) {
   this.image = i;
 }
 
-var transformador = new CanvasImage($('pic'), $('#my-image').attr('src'))
+$(function() {
+  var transformador = new CanvasImage(document.getElementById('pic'), $('#my-image').attr('src'));
+});
 
 CanvasImage.prototype.getData = function() {
   return this.context.getImageData(0, 0, this.image.width, this.image.heiht);
@@ -26,4 +28,3 @@ CanvasImage.prototype.setData = function(data) {
 CanvasImage.prototype.reset = function() {
   this.setData(this.original);
 };
-
