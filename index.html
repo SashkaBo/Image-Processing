@@ -1,15 +1,13 @@
 <!DOCTYPE html>
 <html>
-<head>
+  <head>
     <title>Image Processing</title>
     <meta charset="utf-8">
     <link href="css/bootstrap.min.css" rel="stylesheet">
 
-</head>
+  </head>
 
-<body>
-
-    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+  <body>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
     <script src="js/filters.js"></script>
@@ -17,27 +15,29 @@
     <div class="container">
         <div class="row">
             <div class="col-md-3">
-                <label class=""><h3>Фильтры</h3></label>
-                <button type="button" class="btn btn-success btn-block" onclick="simpleBlur()">Простейшее размытие</button>
-                <button type="button" class="btn btn-success btn-block">Константной размытие</button>
-                <button type="button" class="btn btn-success btn-block">Повышение резкости</button>
-                <button type="button" class="btn btn-success btn-block">Нахождение границ</button>
-                <button type="button" class="btn btn-success btn-block">Тиснение</button>
+                <label><h3>Фильтры</h3></label>
+                <button type="button" id="negative" class="btn btn-success btn-block">Негатив</button>
+                <!-- <button type="button" class="btn btn-success btn-block">Константной размытие</button> -->
+                <!-- <button type="button" class="btn btn-success btn-block">Повышение резкости</button> -->
+                <!-- <button type="button" class="btn btn-success btn-block">Нахождение границ</button> -->
+                <!-- <button type="button" class="btn btn-success btn-block">Тиснение</button> -->
             </div>
-            <div class="col-md-9">
-                <figure>
-                <img id="my-image" src="images/girl.jpg" width="600" height="437" alt="Girl with dandelion" class="img-thumbnail" style="display: none">
-                <canvas id="pic" width="600" height="437"></canvas>
-                </figure>
+            <div class="col-md-8">
+              <div class="col-md-6">
+                <div>
+                  <label><h3>Оригинал</h3></label>
+                </div>
+
+                <img id="my-image" src="images/girl.jpg" width="300" height="215" alt="Girl with dandelion" class="img-thumbnail">
+              </div>
+              <div class="col-md-6">
+                <div>
+                  <label><h3>Полученное</h3></label>
+                </div>
+                <canvas id="pic" class="img-thumbnail" width="300" height="215"></canvas>
+              </div>
             </div>
         </div>
     </div>
-
-
-
-
-
-
-
-</body>
+  </body>
 </html>
