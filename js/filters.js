@@ -3,8 +3,16 @@ $(function() {
     transformador.transform(negative);
   });
 
+  $('#reset').click(function() {
+    transformador.reset();
+  });
+
+
   var negative = function(r, g, b) {
     return [255 - r, 255 - g, 255 - b, 255];
+  };
+
+  var reset = function() {
   };
 
   function CanvasImage(canvas, src) {
@@ -51,6 +59,47 @@ $(function() {
       newpx[i+1] = res[1]; // g
       newpx[i+2] = res[2]; // b
       newpx[i+3] = res[3]; // a
+    }
+    this.setData(newdata);
+  };
+
+  CanvasImage.prototype.convolve = function(matrix, divisor, offset) {
+    var m = [].concat(matrix[0], matrix[1], matrix[2]); // flatten
+    if (!divisor) {
+      divisor = m.reduce(function(a, b) {return a + b;}) || 1; // sum
+    }
+    var olddata = this.original;
+    var oldpx = olddata.data;
+    var newdata = this.context.createImageData(olddata);
+    var newpx = newdata.data
+    var len = newpx.length;
+    var res = 0;
+    var w = this.image.width;
+    for (var i = 0; i < len; i++) {
+      if ((i + 1) % 4 === 0) {
+        newpx[i] = oldpx[i];
+        continue;
+      }
+      res = 0;
+      var these = [
+        oldpx[i - w * 4 - 4] || oldpx[i],
+        oldpx[i - w * 4]     || oldpx[i],
+        oldpx[i - w * 4 + 4] || oldpx[i],
+        oldpx[i - 4]         || oldpx[i],
+        oldpx[i],
+        oldpx[i + 4]         || oldpx[i],
+        oldpx[i + w * 4 - 4] || oldpx[i],
+        oldpx[i + w * 4]     || oldpx[i],
+        oldpx[i + w * 4 + 4] || oldpx[i]
+      ];
+      for (var j = 0; j < 9; j++) {
+        res += these[j] * m[j];
+      }
+      res /= divisor;
+      if (offset) {
+        res += offset;
+      }
+      newpx[i] = res;
     }
     this.setData(newdata);
   };
