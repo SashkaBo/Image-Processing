@@ -11,6 +11,14 @@ $(function() {
     transformador.convolve([[1,2,1],[2,3,2],[1,2,1]], 15);
   });
 
+  $('#borders-finding').click(function() {
+    transformador.convolve([[0,-1,0],[-1,4,-1],[0,-1,0]]);
+  });
+
+  $('#stamping').click(function() {
+    transformador.convolve([[0,1,0],[1,0,-1],[0,-1,0]], 1, 100);
+  });
+
   $('#reset').click(function() {
     transformador.reset();
   });
