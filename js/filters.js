@@ -1,12 +1,11 @@
 $(function() {
   $('#negative').click(function() {
-    transformador.transform(negative);
+    transformador.convolve([[0,0,0],[0,-1,0],[0,0,0]], 1, 256);
   });
 
   $('#reset').click(function() {
     transformador.reset();
   });
-
 
   var negative = function(r, g, b) {
     return [255 - r, 255 - g, 255 - b, 255];
@@ -44,23 +43,6 @@ $(function() {
 
   CanvasImage.prototype.reset = function() {
     this.setData(this.original);
-  };
-
-  CanvasImage.prototype.transform = function(fn) {
-    var olddata = this.original;
-    var oldpx = olddata.data;
-    var newdata = this.context.createImageData(olddata);
-    var newpx = newdata.data
-    var res = [];
-    var len = newpx.length;
-    for (var i = 0; i < len; i += 4) {
-      res = fn.call(this, oldpx[i], oldpx[i+1], oldpx[i+2], oldpx[i+3], i);
-      newpx[i]   = res[0]; // r
-      newpx[i+1] = res[1]; // g
-      newpx[i+2] = res[2]; // b
-      newpx[i+3] = res[3]; // a
-    }
-    this.setData(newdata);
   };
 
   CanvasImage.prototype.convolve = function(matrix, divisor, offset) {
