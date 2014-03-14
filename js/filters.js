@@ -3,6 +3,14 @@ $(function() {
     transformador.convolve([[0,0,0],[0,-1,0],[0,0,0]], 1, 256);
   });
 
+  $('#sharpen').click(function() {
+    transformador.convolve([[-1,-2,-1],[-2,22,-2],[-1,-2,-1]], 10);
+  });
+
+  $('#simple-blur').click(function() {
+    transformador.convolve([[1,2,1],[2,3,2],[1,2,1]], 15);
+  });
+
   $('#reset').click(function() {
     transformador.reset();
   });
