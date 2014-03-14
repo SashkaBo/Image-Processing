@@ -7,13 +7,6 @@ $(function() {
     transformador.reset();
   });
 
-  var negative = function(r, g, b) {
-    return [255 - r, 255 - g, 255 - b, 255];
-  };
-
-  var reset = function() {
-  };
-
   function CanvasImage(canvas, src) {
     var context = canvas.getContext('2d');
     var i = new Image();
