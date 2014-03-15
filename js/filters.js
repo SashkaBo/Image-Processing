@@ -1,38 +1,97 @@
-function simpleBlur(){
-    alert(1);
+$(function() {
+  $('#negative').click(function() {
+    transformador.convolve([[0,0,0],[0,-1,0],[0,0,0]], 1, 256);
+  });
 
-};
+  $('#sharpen').click(function() {
+    transformador.convolve([[-1,-2,-1],[-2,22,-2],[-1,-2,-1]], 10);
+  });
 
-Filters = {};
+  $('#simple-blur').click(function() {
+    transformador.convolve([[1,2,1],[2,3,2],[1,2,1]], 15);
+  });
 
-Filters.getPixels = function(img) {
-    var c = this.getCanvas(img.width, img.height);
-    var ctx = c.getContext('2d');
-    ctx.drawImage(img);
-    return ctx.getImageData(0,0,c.width,c.height);
-};
+  $('#borders-finding').click(function() {
+    transformador.convolve([[0,-1,0],[-1,4,-1],[0,-1,0]]);
+  });
 
-Filters.getCanvas = function(w,h) {
-    var c = document.createElement('canvas');
-    c.width = w;
-    c.height = h;
-    return c;
-};
+  $('#stamping').click(function() {
+    transformador.convolve([[0,1,0],[1,0,-1],[0,-1,0]], 1, 100);
+  });
 
-Filters.filterImage = function(filter, image, var_args) {
-    var args = [this.getPixels(image)];
-    for (var i=2; i<arguments.length; i++) {
-        args.push(arguments[i]);
+  $('#reset').click(function() {
+    transformador.reset();
+  });
+
+  function CanvasImage(canvas, src) {
+    var context = canvas.getContext('2d');
+    var i = new Image();
+    i.width = 290;
+    i.height = 211;
+    var that = this;
+    i.onload = function() {
+      canvas.width = i.width;
+      canvas.height = i.height;
+      context.drawImage(i, 0, 0, i.width, i.height);
+      that.original = that.getData();
+    };
+    i.src = src;
+    this.context = context;
+    this.image = i;
+  }
+
+  var transformador = new CanvasImage(document.getElementById('pic'), $('#my-image').attr('src'));
+
+  CanvasImage.prototype.getData = function() {
+    return this.context.getImageData(0, 0, this.image.width, this.image.height);
+  };
+
+  CanvasImage.prototype.setData = function(data) {
+    return this.context.putImageData(data, 0, 0);
+  };
+
+  CanvasImage.prototype.reset = function() {
+    this.setData(this.original);
+  };
+
+  CanvasImage.prototype.convolve = function(matrix, divisor, offset) {
+    var m = [].concat(matrix[0], matrix[1], matrix[2]); // flatten
+    if (!divisor) {
+      divisor = m.reduce(function(a, b) {return a + b;}) || 1; // sum
     }
-    return filter.apply(null, args);
-};
-
-Filters.brightness = function(pixels, adjustment) {
-    var d = pixels.data;
-    for (var i=0; i<d.length; i+=4) {
-        d[i] += adjustment;
-        d[i+1] += adjustment;
-        d[i+2] += adjustment;
+    var olddata = this.original;
+    var oldpx = olddata.data;
+    var newdata = this.context.createImageData(olddata);
+    var newpx = newdata.data
+    var len = newpx.length;
+    var res = 0;
+    var w = this.image.width;
+    for (var i = 0; i < len; i++) {
+      if ((i + 1) % 4 === 0) {
+        newpx[i] = oldpx[i];
+        continue;
+      }
+      res = 0;
+      var these = [
+        oldpx[i - w * 4 - 4] || oldpx[i],
+        oldpx[i - w * 4]     || oldpx[i],
+        oldpx[i - w * 4 + 4] || oldpx[i],
+        oldpx[i - 4]         || oldpx[i],
+        oldpx[i],
+        oldpx[i + 4]         || oldpx[i],
+        oldpx[i + w * 4 - 4] || oldpx[i],
+        oldpx[i + w * 4]     || oldpx[i],
+        oldpx[i + w * 4 + 4] || oldpx[i]
+      ];
+      for (var j = 0; j < 9; j++) {
+        res += these[j] * m[j];
+      }
+      res /= divisor;
+      if (offset) {
+        res += offset;
+      }
+      newpx[i] = res;
     }
-    return pixels;
-};
+    this.setData(newdata);
+  };
+});
